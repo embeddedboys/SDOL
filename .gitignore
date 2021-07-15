@@ -1,7 +1,7 @@
 # file of keil 
 *.uvopt
 *.uvproj
-*.huazheng
+*.uvgui.huazheng
 Listings
 Objects
 
