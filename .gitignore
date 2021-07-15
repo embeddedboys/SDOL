@@ -1,3 +1,9 @@
+# file of keil 
+*.uvopt
+*.uvproj
+Listings
+Objects
+
 # Prerequisites
 *.d
 
