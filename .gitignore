@@ -1,9 +1,5 @@
-# file of keil 
-*.uvopt
-*.uvproj
-*.uvgui.huazheng
-Listings
-Objects
+# file of keil
+mdk_project
 
 # Prerequisites
 *.d

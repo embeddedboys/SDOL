@@ -1,7 +1,6 @@
 #include <intrins.h>
 #include "system.h"	/*opreations of system*/
 #include "oled.h"		/*oled lib*/
-#include "disp_manager.h"
 
 /*
 
@@ -21,8 +20,8 @@ void SystemInit()
 	my_sys_opr.iomux ( P32P33_I2C );
 
 	/* register driver of oled */
-	register_oled_operations ( &my_oled_opr );
-	my_oled_opr.init();
+	//register_oled_operations ( &my_oled_opr );
+	//my_oled_opr.init();
 }
 
 /**
@@ -34,7 +33,7 @@ int main(void)
 {
 	int x, y;
 	int offset=1;
-	int page,col;
+	//int page,col;
 	uint8_t *str = "Hello World!";
 	
 	SystemInit();
