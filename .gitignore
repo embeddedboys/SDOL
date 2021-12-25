@@ -1,6 +1,9 @@
 # file of keil
 mdk_project
 
+# others
+.vscode
+
 # Prerequisites
 *.d
 

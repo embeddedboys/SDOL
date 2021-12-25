@@ -17,3 +17,23 @@
  * along with sdol.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+uint8_t simple_atoi(int8_t c)
+{
+
+}
+
+uint8_t simple_itoa(uint8_t n)
+{
+    
+}
+
+void delay_us(uint32_t us)
+{
+	unsigned char i;
+
+    while(us--)
+    {
+	    i = 6;
+	    while (--i);
+    }
+}
