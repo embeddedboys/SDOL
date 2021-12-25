@@ -87,28 +87,28 @@ void __ds1302_set_rst(uint8_t val)
  */
 void __ds1302_writebyte(uint8_t byte)
 {
-    uint8_t i;
-    uint8_t tmp = 0;
-    for (i = 0; i < 8; i++)
+    do
     {
-        tmp = byte << 7;
         __ds1302_set_clk(0);
-        __ds1302_set_dat(tmp ? 1 : 0);
+        __ds1302_set_dat(byte & 0x1);
         __ds1302_set_clk(1);
-        byte >>= 1;
-    }
+    } while (byte >>= 1);
 }
 
+/**
+ * @brief read a byte from ds1302, LSB first out too!
+ * 
+ * @return uint8_t 
+ */
 uint8_t __ds1302_readebyte()
 {
     uint8_t i;
     uint8_t res = 0;
     for (i = 0; i < 8; i++)
     {
-        __ds1302_set_clk(1);
-        res <<= 1;
-        res |= __ds1302_get_dat();
         __ds1302_set_clk(0);
+        // res |= __ds1302_get_dat() << i;
+        __ds1302_set_clk(1);
     }
     return res;
 }

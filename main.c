@@ -16,8 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with sdol.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <intrins.h>
+#include <stdio.h>
 #include "system.h" /*opreations of system*/
 #include "oled.h"	/*oled lib*/
 #include "ds1302.h"
@@ -59,15 +58,17 @@ int main(void)
 	int x, y;
 	int offset = 1;
 	int page, col;
-	uint8_t res = 0x0;
+	uint8_t res = 0;
 	uint8_t *str = "Hello World!";
+	uint8_t buf[16]={0};
 
 	SystemInit();
 
-	my_ds1302_opr.write_register(0x8A, 0x07);
+	my_ds1302_opr.write_register(0x8A, 0x01);
 	res = my_ds1302_opr.read_register(0x8B);
 	my_oled_opr.putstring(0, 0, "read from reg:");
-	my_oled_opr.putchar(2, 0, res+'0');
+	sprintf(buf, "%d", res);
+	my_oled_opr.putstring(2, 0, buf);
 
 	/*for ( y = 0, x = 0; x < 64; y++, x++ ) {
 		my_oled_opr.set_pixel ( x, y, 1 );

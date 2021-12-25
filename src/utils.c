@@ -16,24 +16,45 @@
  * You should have received a copy of the GNU General Public License
  * along with sdol.  If not, see <http://www.gnu.org/licenses/>.
  */
+#include "utils.h"
 
-uint8_t simple_atoi(int8_t c)
+int32_t simple_atoi(uint8_t s[])
 {
+    int i, n;
 
+    n = 0;
+    for (i = 0; s[i] <= '9' && s[i] >= '0'; ++i)
+    {
+        n = 10 * n + (s[i] - '0');
+    }
+    return n;
 }
 
 uint8_t simple_itoa(uint8_t n)
 {
-    
 }
 
-void delay_us(uint32_t us)
+uint8_t simple_lower(uint8_t c)
 {
-	unsigned char i;
-
-    while(us--)
-    {
-	    i = 6;
-	    while (--i);
-    }
+    if (c >= 'A' && c <= 'Z')
+        return c + 'a' - 'A';
+    else
+        return c;
 }
+
+uint8_t simple_isdigit(uint8_t c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+// void delay_us(uint32_t us)
+// {
+//     unsigned char i;
+
+//     while (us--)
+//     {
+//         i = 6;
+//         while (--i)
+//             ;
+//     }
+// }

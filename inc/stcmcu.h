@@ -30,6 +30,8 @@
 #include <reg51.h>
 #include <stdlib.h>
 #include<intrins.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 /*********************
  *      DEFINES
