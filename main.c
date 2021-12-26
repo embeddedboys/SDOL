@@ -17,6 +17,7 @@
  * along with sdol.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include <stdio.h>
+#include <string.h>
 #include "system.h" /*opreations of system*/
 #include "oled.h"	/*oled lib*/
 #include "ds1302.h"
@@ -55,20 +56,18 @@ void SystemInit()
 */
 int main(void)
 {
-	int x, y;
-	int offset = 1;
-	int page, col;
+	// int x, y;
+	// int offset = 1;
+	// int page, col;
+	uint32_t i;
 	uint8_t res = 0;
+	uint32_t ten;
+	uint32_t biz;
+	uint32_t seconds;
 	uint8_t *str = "Hello World!";
-	uint8_t buf[16]={0};
+	uint8_t buf[16] = {0};
 
 	SystemInit();
-
-	my_ds1302_opr.write_register(0x8A, 0x01);
-	res = my_ds1302_opr.read_register(0x8B);
-	my_oled_opr.putstring(0, 0, "read from reg:");
-	sprintf(buf, "%d", res);
-	my_oled_opr.putstring(2, 0, buf);
 
 	/*for ( y = 0, x = 0; x < 64; y++, x++ ) {
 		my_oled_opr.set_pixel ( x, y, 1 );
@@ -84,11 +83,59 @@ int main(void)
 	/*for(y=0;y<6;y++)
 		for(x=0;x<12;x++)
 			Glib_Rectangle(x*10+offset,y*10,x*10+offset+10,y*10+10);*/
-
+	// my_oled_opr.putstring(0, 0, "seconds:");
 	/* flush pointdata to screen */
-	my_oled_opr.flush();
-
+	// my_oled_opr.flush();
+	my_ds1302_opr.write_register(0x84, 0x7);
+	my_ds1302_opr.write_register(0x82, 0x20);
+	my_ds1302_opr.write_register(0x80, 0x0);
+	res = my_ds1302_opr.read_register(0x8f);
+	ten = (res & 0xf0) >> 4;
+	my_oled_opr.putchar(6, 0, ten + '0');
+	my_oled_opr.putascii_string(0, 0, "read from reg do you know:");
 	while (1)
-		;
+	{
+		// i=5000;
+		// res = my_ds1302_opr.read_register(0x81);
+		// tmp = ((res << 1) >> 4) * 10 + (res & 0x0f);
+		// seconds = tmp;
+		// sprintf(buf, "%d", seconds);
+		// buf[2]='\0';
+		// my_oled_opr.putstring(2, 0, buf);
+		// my_oled_opr.flush();
+		// memset(buf, 0x0, 2);
+		// while(i--);
+		// my_oled_opr.clear();
+		res = my_ds1302_opr.read_register(0x85) & ~(1 << 7);
+		ten = (res & 0x10) >> 4;
+		biz = (res & 0x0f);
+
+		my_oled_opr.putascii(0, 30, ten + '0');
+		my_oled_opr.putascii(8, 30, biz + '0');
+
+		my_oled_opr.putascii(16, 30, ':');
+
+		res = my_ds1302_opr.read_register(0x83) & ~(1 << 7);
+		ten = (res & 0xf0) >> 4;
+		biz = (res & 0x0f);
+
+		my_oled_opr.putascii(24, 30, ten + '0');
+		my_oled_opr.putascii(32, 30, biz + '0');
+
+		my_oled_opr.putascii(40, 30, ':');
+
+		res = my_ds1302_opr.read_register(0x81) & ~(1 << 7);
+		ten = (res & 0xf0) >> 4;
+		biz = (res & 0x0f);
+
+		my_oled_opr.putascii(48, 30, ten + '0');
+		my_oled_opr.putascii(56, 30, biz + '0');
+
+		// sprintf(buf, "%d%d", ten, biz);
+		// buf[15] = '\0';
+		// my_oled_opr.putascii_string(0, 30, buf);
+		my_oled_opr.flush();
+		// memset(buf, 0x0, 16);
+	}
 	return 0;
 }

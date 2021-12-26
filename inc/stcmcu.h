@@ -29,9 +29,10 @@
 *********************/
 #include <reg51.h>
 #include <stdlib.h>
-#include<intrins.h>
+#include <intrins.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 /*********************
  *      DEFINES
@@ -55,6 +56,8 @@
 #define P3DR       (*(volatile unsigned char xdata *)0xfe2b)
 #define P3IE       (*(volatile unsigned char xdata *)0xfe33)
 
+#define P2PU       (*(volatile unsigned char xdata *)0xfe12)
+
 
 /**********************
 *      TYPEDEFS
@@ -77,14 +80,23 @@ typedef uint8_t grp_pin_t;
 /*********************
 *      SFR
 *********************/
+/* pin state register list(Px) */
 
 /* Control register_ of STC8G inside IRC clock. */
 sfr IRCBAND  =  0x9d;   /*  */
 sfr LIRTRIM  =  0x9e;
 sfr IRTRIM   =  0x9f;
 
+sfr P0M1 = 0x94;
+sfr P0M0 = 0x95;
+sfr P1M1 = 0x91;
+sfr P1M0 = 0x92;
+sfr P2M1 = 0x95;
+sfr P2M0 = 0x96;
 sfr P3M1 = 0xb1;
 sfr P3M0 = 0xb2;
+sfr P4M1 = 0xb3;
+sfr P4M0 = 0xb4;
 sfr P_SW2 = 0xba;
 /*
 * System Reset

@@ -71,11 +71,9 @@ void system_reset ( uint8_t reset_type )
 }
 
 /**
-* @description
-*
-* @param
-* @return
-*/
+ * @brief 
+ * 
+ */
 void system_wdt_init()
 {
 	wdt_contr *con;
@@ -92,11 +90,11 @@ void system_wdt_init()
 }
 
 /**
-* @description
-*
-* @param
-* @return
-*/
+ * @brief set the mode of given pin
+ * 
+ * @param gp group and pin
+ * @param mode pin IO mode
+ */
 void __system_io_mode ( grp_pin_t gp, uint8_t mode )
 {
 	uint8_t group, pin;
@@ -106,20 +104,23 @@ void __system_io_mode ( grp_pin_t gp, uint8_t mode )
 
 	switch ( group ) {
 		case 0: /* Group P0 */
+			P0M1 &= ~ ( (mode & 0x02) << pin );
+			P0M0 &= ~ ( (mode & 0x01) << pin );
 			break;
 
 		case 1: /* Group P1 */
+			P1M1 &= ~ ( (mode & 0x02) << pin );
+			P1M0 &= ~ ( (mode & 0x01) << pin );
 			break;
 
 		case 2: /* Group P2 */
+			P2M1 &= ~ ( (mode & 0x02) << pin );
+			P2M0 &= ~ ( (mode & 0x01) << pin );
 			break;
 
 		case 3: /* Group P3 */
-			P3M1 &= ~ ( 1 << pin );
-			P3M0 &= ~ ( 1 << pin );
-
-			/*P3M1 |= ( ( mode >> 1 ) << pin );
-			P3M0 |= ( mode & 0xfe );*/
+			P3M1 &= ~ ( (mode & 0x02) << pin );
+			P3M0 &= ~ ( (mode & 0x01) << pin );
 			break;
 
 		default:
@@ -141,7 +142,7 @@ void system_iomux ( uint8_t iomux_type )
 		case P32P33_I2C:
 			__system_io_mode ( GROUP_PIN ( 3, 2 ), STANDARD_IO );
 			__system_io_mode ( GROUP_PIN ( 3, 3 ), STANDARD_IO );
-			P_SW2 = ( 1 << 7 | 3 << 4 );
+			P_SW2 = ( 1 << 7 | 3 << 4 );	/* enable XFR and set P3.2(SCL) P3.3(SDA) as I2C function */
 			break;
 
 		default:    /* As default. Configure P3.2 P3.3 pin as GPIO */

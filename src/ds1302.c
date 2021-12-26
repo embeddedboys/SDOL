@@ -18,7 +18,8 @@
  */
 
 #include "ds1302.h"
-
+#include "oled.h"
+#include <string.h>
 /**
  * @brief set DS1302 pin CLK state
  * 
@@ -83,16 +84,16 @@ void __ds1302_set_rst(uint8_t val)
 /**
  * @brief write a byte to ds1302, LSB first out!
  * 
- * @param byte 
+ * @param byte_in 
  */
-void __ds1302_writebyte(uint8_t byte)
+void __ds1302_writebyte(uint8_t byte_in)
 {
     do
     {
         __ds1302_set_clk(0);
-        __ds1302_set_dat(byte & 0x1);
+        __ds1302_set_dat(byte_in & 0x1);
         __ds1302_set_clk(1);
-    } while (byte >>= 1);
+    } while (byte_in >>= 1);
 }
 
 /**
@@ -104,18 +105,21 @@ uint8_t __ds1302_readebyte()
 {
     uint8_t i;
     uint8_t res = 0;
+
     for (i = 0; i < 8; i++)
     {
         __ds1302_set_clk(0);
-        // res |= __ds1302_get_dat() << i;
+        res |= __ds1302_get_dat() << i;
         __ds1302_set_clk(1);
     }
+
     return res;
 }
 
 uint8_t ds1302_read_register(uint8_t command)
 {
-    uint8_t res;
+    uint8_t res = 0;
+
     __ds1302_set_rst(1);
 
     __ds1302_writebyte(command);
@@ -125,21 +129,27 @@ uint8_t ds1302_read_register(uint8_t command)
     return res;
 }
 
-void ds1302_write_register(uint8_t command, uint8_t byte)
+void ds1302_write_register(uint8_t command, uint8_t byte_in)
 {
     __ds1302_set_rst(1);
 
     __ds1302_writebyte(command);
-    __ds1302_writebyte(byte);
+    __ds1302_writebyte(byte_in);
 
     __ds1302_set_rst(0);
 }
 
 void ds1302_init()
 {
+    P2PU &= ~(0x07 << 0);
+    P2PU |= (0x07 << 0);
+
     __ds1302_set_rst(0);
     __ds1302_set_clk(0);
     __ds1302_set_dat(0);
+
+    // ds1302_write_register(0x80, 0x00);
+    ds1302_write_register(0x8e, 0x00);
 }
 
 void ds1302_deinit()

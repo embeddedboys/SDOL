@@ -108,17 +108,17 @@ void oled_set_pos(uint8_t page, uint8_t col)
 *@param
 *@return
 */
-void oled_clear()
+void oled_flush()
 {
-	int count = 0;
+	uint8_t page, col;
 
-	for (; count < 1024; count++)
-	{
-		oled_set_pos(
-			GET_PAGE_FROM_BUFFER(count),
-			GET_COL_FROM_BUFFER(count));
-		oled_write_dat(0x00);
-	}
+	for (page = 0; page < 8; page++)
+		for (col = 0; col < 128; col++)
+		// if (oled_buffer[OFFSET(page, col)] != 0x00)
+		{
+			oled_set_pos(page, col);
+			oled_write_dat(oled_buffer[OFFSET(page, col)]);
+		}
 }
 
 /**
@@ -126,26 +126,19 @@ void oled_clear()
 *@param
 *@return
 */
-void oled_putchar(uint8_t page, uint8_t col, uint8_t cha)
+void oled_clear()
 {
-	int i;
-	/* get the cha in oledfont */
-	const uint8_t *dots = oled_asc2_8x16[cha - ' '];
+	uint8_t page, col;
 
-	for (i = 0; i < 8; i++)
-		oled_buffer[OFFSET(page, col + i)] = dots[i];
-
-	for (i = 0; i < 8; i++)
-		oled_buffer[OFFSET(page + 1, col + i)] = dots[i + 8];
-}
-
-void oled_putstring(uint8_t page, uint8_t col, uint8_t *str)
-{
-	while (*str != '\0')
-	{
-		oled_putchar(page, col, *str++);
-		col += 8;
-	}
+	for (page = 0; page < 8; page++)
+		for (col = 0; col < 128; col++)
+			if (oled_buffer[OFFSET(page, col)] > 0x00)
+			{
+				oled_set_pos(page, col);
+				oled_write_dat(0);
+			}
+	// memset(oled_buffer, 0x0, 1024);
+	// oled_flush();
 }
 
 /**
@@ -186,10 +179,9 @@ void oled_init(void)
 }
 
 /**
-*@description 
-*@param
-*@return
-*/
+ * @brief 
+ * 
+ */
 void oled_device_init(void)
 {
 	int count = 0;
@@ -202,44 +194,171 @@ void oled_device_init(void)
 }
 
 /**
-*@description
-*@param
-*@return
-*/
-void oled_set_pixel(uint16_t x, uint16_t y, uint16_t color)
+ * @brief 
+ * 
+ * @param x 
+ * @param y 
+ * @param color 
+ */
+void oled_set_pixel(oled_coord_t x, oled_coord_t y, oled_color_t color)
 {
 	uint8_t page, page_left;
+	uint8_t *pen = oled_buffer;
 
-	if ((x >= 0 && x <= 127) && (y >= 0 && y <= 63))
+#ifdef OLED_COORD_CHECK
+	if ((x >= 0 && x < OLED_HOR_RES_MAX) && (y >= 0 && y < OLED_VER_RES_MAX))
 	{
+#endif
 		page = y / 8;
 		page_left = y % 8 == 0 ? 0 : y % 8;
 
-		oled_buffer[OFFSET(page, x)] |= color << (page_left);
+		if (color)
+		{
+			pen[OFFSET(page, x)] |= (1 << page_left);
+		}
+		else
+		{
+			pen[OFFSET(page, x)] &= ~(1 << page_left);
+		}
+
+#ifdef OLED_CHECK_VAILD
 	}
+#endif
 
 	/*oled_set_pos(page, x);
 	oled_write_dat(oled_buffer[offset]);*/
 }
 
 /**
-*@description
-*@param
-*@return
-*/
-void oled_flush()
+ * @brief 
+ * 
+ * @param area 
+ * @param color 
+ */
+void oled_clear_area(oled_area_t *area, oled_color_t color)
 {
-	uint8_t page, col;
-
-	for (page = 0; page < 8; page++)
-		for (col = 0; col < 128; col++)
-			if (oled_buffer[OFFSET(page, col)] != 0x00)
-			{
-				oled_set_pos(page, col);
-				oled_write_dat(oled_buffer[OFFSET(page, col)]);
-			}
+	int32_t x, y;
+	for (y = area->y1; y <= area->y2; y++)
+	{
+		for (x = area->x1; x <= area->x2; x++)
+		{
+			oled_set_pixel(x, y, color);
+		}
+	}
 }
 
+/**
+ * @brief put a char to give area.
+ * TODO: remember to clear the area before write.
+ * @param page 
+ * @param col 
+ * @param cha 
+ */
+void oled_putchar(uint8_t page, uint8_t col, uint8_t cha)
+{
+	int i;
+	/* get the cha in oledfont */
+	const uint8_t *dots = oled_asc2_8x16[cha - ' '];
+	uint8_t *pen = oled_buffer;
+
+	for (i = 0; i < 8; i++)
+	{
+		pen[OFFSET(page, col + i)] = 0x00;
+		pen[OFFSET(page + 1, col + i)] = 0x00;
+	}
+
+	for (i = 0; i < 8; i++)
+	{
+		pen[OFFSET(page, col + i)] = dots[i];
+	}
+
+	for (i = 0; i < 8; i++)
+	{
+		pen[OFFSET(page + 1, col + i)] = dots[i + 8];
+	}
+}
+
+/**
+ * @brief 
+ * 
+ * @param page 
+ * @param col 
+ * @param str 
+ */
+void oled_putstring(uint8_t page, uint8_t col, uint8_t *str)
+{
+	while (*str != '\0')
+	{
+		oled_putchar(page, col, *str++);
+		col += 8;
+	}
+}
+
+/**
+ * @brief 
+ * 
+ * @param x 
+ * @param y 
+ * @param c 
+ */
+void oled_put_ascii(oled_coord_t x, oled_coord_t y, uint32_t c)
+{
+	int row, column;
+	uint8_t byte;
+	const uint8_t *dots = (uint8_t *)&fontdata_8x16[c * 16];
+	uint8_t *pen = oled_buffer;
+
+	oled_area_t clear_area;
+	clear_area.x1 = x;
+	clear_area.y1 = y;
+	clear_area.x2 = x + 8;
+	clear_area.y2 = y + 16;
+
+	oled_clear_area(&clear_area, 0);
+
+	for (row = 0; row < 16; row++)
+	{
+		byte = dots[row];
+		for (column = 7; column >= 0; column--)
+		{
+			if (byte & (1 << column))
+			{
+				oled_set_pixel(x + 7 - column, y + row, 1);
+			}
+			else
+			{
+				oled_set_pixel(x + 7 - column, y + row, 0);
+			}
+		}
+	}
+}
+
+/**
+ * @brief 
+ * 
+ * @param x 
+ * @param y 
+ * @param str 
+ */
+void oled_putascii_string(oled_coord_t x, oled_coord_t y, uint8_t *str)
+{
+	while (*str != '\0')
+	{
+		oled_put_ascii(x, y, *str++);
+		x += 8;
+		if (x == 128)
+			y += 5;
+	}
+}
+
+/**
+ * @brief 
+ * 
+ * @param x1 
+ * @param y1 
+ * @param x2 
+ * @param y2 
+ */
 void Glib_Line(int x1, int y1, int x2, int y2)
 {
 	int dx, dy, e;
@@ -416,6 +535,14 @@ void Glib_Line(int x1, int y1, int x2, int y2)
 	}
 }
 
+/**
+ * @brief 
+ * 
+ * @param x1 
+ * @param y1 
+ * @param x2 
+ * @param y2 
+ */
 void Glib_Rectangle(int x1, int y1, int x2, int y2)
 {
 	Glib_Line(x1, y1, x2, y1);
@@ -425,10 +552,10 @@ void Glib_Rectangle(int x1, int y1, int x2, int y2)
 }
 
 /**
-*@description
-*@param
-*@return
-*/
+ * @brief 
+ * 
+ * @param opr 
+ */
 void register_oled_operations(struct oled_operations *opr)
 {
 	i2c_init();
@@ -440,5 +567,7 @@ void register_oled_operations(struct oled_operations *opr)
 	opr->set_pixel = oled_set_pixel;
 	opr->flush = oled_flush;
 	opr->putchar = oled_putchar;
+	opr->putascii = oled_put_ascii;
 	opr->putstring = oled_putstring;
+	opr->putascii_string = oled_putascii_string;
 }

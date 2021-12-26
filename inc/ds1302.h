@@ -52,7 +52,16 @@
 sbit DS1302_CLK = P2 ^ 0;
 sbit DS1302_DAT = P2 ^ 1;
 sbit DS1302_RST = P2 ^ 2;
-#define nop() {_nop_();_nop_();_nop_();_nop_();}
+// #define DS1302_CLK GROUP_PIN(2, 0)
+// #define DS1302_DAT GROUP_PIN(2, 1)
+// #define DS1302_RST GROUP_PIN(2, 2)
+#define nop()    \
+	{            \
+		_nop_(); \
+		_nop_(); \
+		_nop_(); \
+		_nop_(); \
+	}
 
 /**********************
 *      TYPEDEFS
@@ -69,17 +78,62 @@ typedef struct
 
 } ds1302_handle_t;
 
+typedef struct
+{
+	uint8_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t second;
+
+	uint8_t format_hour;
+
+} ds1302_config_t;
+
 struct ds1302_operations
 {
 	void (*init)();
 	void (*deinit)();
 	uint8_t (*read_register)(uint8_t command);
 	void (*write_register)(uint8_t command, uint8_t byte);
+
+	/* getter and setters for each value*/
+	uint8_t (*get_year)();
+	uint8_t (*get_month)();
+	uint8_t (*get_day)();
+	uint8_t (*get_hour)();
+	uint8_t (*get_minute)();
+	uint8_t (*get_second)();
+
+	void (*set_year)(uint8_t year);
+	void (*set_month)(uint8_t month);
+	void (*set_day)(uint8_t day);
+	void (*set_hour)(uint8_t hour);
+	void (*set_minute)(uint8_t minute);
+	void (*set_second)(uint8_t second);
+
+	/* getter  and setter for config */
+	ds1302_config_t (*get_configs)();
+	uint8_t (*set_configs)(ds1302_config_t config);
+
+	uint8_t (*set_trickle_charge)(uint8_t function);
 };
 
 /**********************
 *      ENUMS
 **********************/
+typedef enum
+{
+	DS1302_TRICKLE_CHARGE_DISABLED = 0,
+	DS1302_TRICKLE_CHARGE_1_DIODE_2K,
+	DS1302_TRICKLE_CHARGE_1_DIODE_4K,
+	DS1302_TRICKLE_CHARGE_1_DIODE_8K,
+	DS1302_TRICKLE_CHARGE_2_DIODE_2K,
+	DS1302_TRICKLE_CHARGE_2_DIODE_4K,
+	DS1302_TRICKLE_CHARGE_2_DIODE_8K,
+	DS1302_TRICKLE_CHARGE_INITIAL_POWER_ON_STATE,
+} ds1032_trickle_charge_mode;
 
 /**********************
 * GLOBAL PROTOTYPES

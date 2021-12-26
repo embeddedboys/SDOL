@@ -112,6 +112,9 @@ struct oled_operations
 	void (*flush)();
 	void (*putchar)(uint8_t page, uint8_t col, uint8_t cha);
 	void (*putstring)(uint8_t page, uint8_t col, uint8_t *str);
+	void (*putascii)(oled_coord_t x, oled_coord_t y, uint32_t c);
+	void (*putascii_string)(oled_coord_t x, oled_coord_t y, uint32_t *str);
+	
 };
 void register_oled_operations(struct oled_operations *opr);
 
