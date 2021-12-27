@@ -51,6 +51,7 @@
 **********************/
 void i2c_init();
 void i2c_start();
+void i2c_revack();
 void i2c_sndack();
 void i2c_sndnack();
 void i2c_stop();

@@ -31,7 +31,8 @@
 
 void i2c_init()
 {
-	I2CCFG = 0xe0;
+	I2CCFG = 0xE0;
+	// I2CCFG = 0xff;
 	I2CMSST = 0x00;
 }
 void Wait()

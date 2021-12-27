@@ -95,6 +95,12 @@ typedef oled_color8_t oled_color_t;
 
 typedef uint8_t oled_dc_t;
 typedef uint8_t oled_size_t;
+
+typedef struct
+{
+	uint8_t i2c_state;
+	uint8_t lock;
+}oled_handle_t;
 /**********************
  * GLOBAL PROTOTYPES
  **********************/
