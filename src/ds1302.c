@@ -150,7 +150,7 @@ void ds1302_init()
     __ds1302_set_clk(0);
     __ds1302_set_dat(0);
 
-    // ds1302_write_register(0x80, 0x00);
+    ds1302_write_register(0x80, 0x00);
     ds1302_write_register(0x8e, 0x00);
 }
 
