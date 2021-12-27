@@ -18,14 +18,12 @@
  */
 
 #include "ds1302.h"
-#include "oled.h"
-#include <string.h>
 /**
  * @brief set DS1302 pin CLK state
  * 
  * @param val pin state to set
  */
-void __ds1302_set_clk(uint8_t val)
+static void __ds1302_set_clk(uint8_t val)
 {
     if (val)
     {
@@ -42,7 +40,7 @@ void __ds1302_set_clk(uint8_t val)
  * 
  * @param val pin state to set
  */
-void __ds1302_set_dat(uint8_t val)
+static void __ds1302_set_dat(uint8_t val)
 {
     if (val)
     {
@@ -59,7 +57,7 @@ void __ds1302_set_dat(uint8_t val)
  * 
  * @return uint8_t 
  */
-uint8_t __ds1302_get_dat()
+static uint8_t __ds1302_get_dat()
 {
     return DS1302_DAT;
 }
@@ -69,7 +67,7 @@ uint8_t __ds1302_get_dat()
  * 
  * @param val pin state to set
  */
-void __ds1302_set_rst(uint8_t val)
+static void __ds1302_set_rst(uint8_t val)
 {
     if (val)
     {
@@ -86,7 +84,7 @@ void __ds1302_set_rst(uint8_t val)
  * 
  * @param byte_in 
  */
-void __ds1302_writebyte(uint8_t byte_in)
+static void __ds1302_writebyte(uint8_t byte_in)
 {
     int i;
     for (i = 0; i < 8; i++)
@@ -103,7 +101,7 @@ void __ds1302_writebyte(uint8_t byte_in)
  * 
  * @return uint8_t 
  */
-uint8_t __ds1302_readebyte()
+static uint8_t __ds1302_readebyte()
 {
     uint8_t i;
     uint8_t res = 0;

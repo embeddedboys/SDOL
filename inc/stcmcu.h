@@ -58,6 +58,13 @@
 
 #define P2PU       (*(volatile unsigned char xdata *)0xfe12)
 
+#define nop()    \
+	{            \
+		_nop_(); \
+		_nop_(); \
+		_nop_(); \
+		_nop_(); \
+	}
 
 /**********************
 *      TYPEDEFS
