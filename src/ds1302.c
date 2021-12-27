@@ -88,12 +88,14 @@ void __ds1302_set_rst(uint8_t val)
  */
 void __ds1302_writebyte(uint8_t byte_in)
 {
-    do
+    int i;
+    for (i = 0; i < 8; i++)
     {
         __ds1302_set_clk(0);
         __ds1302_set_dat(byte_in & 0x1);
+        byte_in >>= 1;
         __ds1302_set_clk(1);
-    } while (byte_in >>= 1);
+    } 
 }
 
 /**

@@ -86,12 +86,10 @@ int main(void)
 	// my_oled_opr.putstring(0, 0, "seconds:");
 	/* flush pointdata to screen */
 	// my_oled_opr.flush();
-	my_ds1302_opr.write_register(0x84, 0x7);
-	my_ds1302_opr.write_register(0x82, 0x20);
+	my_ds1302_opr.write_register(0x8e, 0x0);
+	my_ds1302_opr.write_register(0x84, 0x0);
+	my_ds1302_opr.write_register(0x82, 0x0);
 	my_ds1302_opr.write_register(0x80, 0x0);
-	res = my_ds1302_opr.read_register(0x8f);
-	ten = (res & 0xf0) >> 4;
-	my_oled_opr.putchar(6, 0, ten + '0');
 	my_oled_opr.putascii_string(0, 0, "read from reg do you know:");
 	while (1)
 	{
