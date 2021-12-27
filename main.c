@@ -102,8 +102,8 @@ int main(void)
 	// my_oled_opr.putstring(0, 0, "seconds:");
 	/* flush pointdata to screen */
 	// my_oled_opr.flush();
-	// my_ds1302_opr.write_register(0x84, 0x15);
-	// my_ds1302_opr.write_register(0x82, 0x15);
+	// my_ds1302_opr.write_register(0x84, 0x2);
+	// my_ds1302_opr.write_register(0x82, 0x36);
 	// my_ds1302_opr.write_register(0x80, 0x0);
 	// my_tm1650_opr.write_register(0x48, 0x11);
 	my_tm1650_opr.set_brightness(TM1650_BRIGHTNESS_LEVEL_8);
@@ -132,6 +132,8 @@ int main(void)
 		my_oled_opr.putascii(0, 30, ten + '0');
 		my_oled_opr.putascii(8, 30, biz + '0');
 		my_oled_opr.putascii(16, 30, ':');
+		my_tm1650_opr.show_bit(TM1650_BIT_1, tm1650_segment_value[ten]);
+		my_tm1650_opr.show_bit(TM1650_BIT_2, tm1650_segment_value[biz] | 0x80);
 
 
 		res = my_ds1302_opr.read_register(0x83) & ~(1 << 7);
@@ -140,16 +142,14 @@ int main(void)
 		my_oled_opr.putascii(24, 30, ten + '0');
 		my_oled_opr.putascii(32, 30, biz + '0');
 		my_oled_opr.putascii(40, 30, ':');
-		my_tm1650_opr.show_bit(TM1650_BIT_1, tm1650_segment_value[ten]);
-		my_tm1650_opr.show_bit(TM1650_BIT_2, tm1650_segment_value[biz] | 0x80);
+		my_tm1650_opr.show_bit(TM1650_BIT_3, tm1650_segment_value[ten]);
+		my_tm1650_opr.show_bit(TM1650_BIT_4, tm1650_segment_value[biz]);
 
 		res = my_ds1302_opr.read_register(0x81) & ~(1 << 7);
 		ten = (res & 0xf0) >> 4;
 		biz = (res & 0x0f);
 		my_oled_opr.putascii(48, 30, ten + '0');
 		my_oled_opr.putascii(56, 30, biz + '0');
-		my_tm1650_opr.show_bit(TM1650_BIT_3, tm1650_segment_value[ten]);
-		my_tm1650_opr.show_bit(TM1650_BIT_4, tm1650_segment_value[biz]);
 
 		// sprintf(buf, "%d%d", ten, biz);
 		// buf[15] = '\0';
