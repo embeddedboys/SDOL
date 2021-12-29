@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License
  * along with sdol.  If not, see <http://www.gnu.org/licenses/>.
  */
-#include <stdio.h>
-#include <string.h>
+
+#include "stcmcu.h"
 #include "system.h"    /* opreations of system */
 #include "oled.h"
 #include "ds1302.h"
@@ -27,7 +27,7 @@ static struct system_operations my_sys_opr;
 static struct oled_operations my_oled_opr;
 static struct ds1302_operations my_ds1302_opr;
 static struct tm1650_operations my_tm1650_opr;
-const unsigned char code tm1650_segment_value[10] = {
+const unsigned char tm1650_segment_value[10] = {
 	0x3f, /* `0` */
 	0x06, /* `1` */
 	0x5b, /* `2` */

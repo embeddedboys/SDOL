@@ -340,7 +340,7 @@ void oled_put_ascii(oled_coord_t x, oled_coord_t y, uint32_t c)
  * @param y 
  * @param str 
  */
-void oled_putascii_string(oled_coord_t x, oled_coord_t y, uint8_t *str)
+void oled_putascii_string(oled_coord_t x, oled_coord_t y, uint8_t *str) reentrant
 {
 	while (*str != '\0')
 	{
