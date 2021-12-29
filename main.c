@@ -18,14 +18,11 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include "system.h" /*opreations of system*/
-#include "oled.h"	/*oled lib*/
+#include "system.h"    /* opreations of system */
+#include "oled.h"
 #include "ds1302.h"
 #include "tm1650.h"
 
-/*
-
-*/
 static struct system_operations my_sys_opr;
 static struct oled_operations my_oled_opr;
 static struct ds1302_operations my_ds1302_opr;
@@ -42,11 +39,10 @@ const unsigned char code tm1650_segment_value[10] = {
 	0x7f, /* `8` */
 	0x6f, /* `9` */
 };
+
 /**
-*@description All initial opr in system.
-*@param
-*@return
-*/
+ * @biref all initialization operations for mcu and device.
+ */
 void SystemInit()
 {
 	/* register driver of system*/
