@@ -58,7 +58,7 @@
  **********************/
 #if ((OLED_HOR_RES_MAX <= 255) && (OLED_VER_RES_MAX <= 255))
 typedef uint8_t oled_coord_t;
-#elif
+#else
 typedef uint16_t oled_coord_t;
 #endif
 
@@ -89,7 +89,7 @@ typedef union
 
 #if (OLED_COLOR_DEPTH == 1)
 typedef uint8_t oled_color_t;
-#elif
+#else
 typedef oled_color8_t oled_color_t;
 #endif
 

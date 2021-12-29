@@ -49,19 +49,9 @@
 /*********************
  *      DEFINES
  *********************/
-sbit DS1302_CLK = P2 ^ 0;
-sbit DS1302_DAT = P2 ^ 1;
-sbit DS1302_RST = P2 ^ 2;
-// #define DS1302_CLK GROUP_PIN(2, 0)
-// #define DS1302_DAT GROUP_PIN(2, 1)
-// #define DS1302_RST GROUP_PIN(2, 2)
-#define nop()    \
-	{            \
-		_nop_(); \
-		_nop_(); \
-		_nop_(); \
-		_nop_(); \
-	}
+__sbit        __at   (0xA0) DS1302_CLK;
+__sbit        __at   (0xA1) DS1302_DAT;
+__sbit        __at   (0xA2) DS1302_RST;
 
 /**********************
 *      TYPEDEFS
@@ -114,8 +104,8 @@ struct ds1302_operations
 	void (*set_second)(uint8_t second);
 
 	/* getter  and setter for config */
-	ds1302_config_t (*get_configs)();
-	uint8_t (*set_configs)(ds1302_config_t config);
+	//ds1302_config_t (*get_configs)();
+	//uint8_t (*set_configs)(ds1302_config_t config);
 
 	uint8_t (*set_trickle_charge)(uint8_t function);
 };

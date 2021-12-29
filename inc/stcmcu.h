@@ -27,11 +27,13 @@
 /*********************
 *      INCLUDES
 *********************/
-#include <reg51.h>
+
+#if(__STC8_MCU_)
+#include "stc8_sdcc.h"
+#endif
+
 #include <stdlib.h>
-#include <intrins.h>
 #include <stdio.h>
-#include <stdarg.h>
 #include <string.h>
 
 /*********************
@@ -39,6 +41,7 @@
  *********************/
 /* ((void(code *)(void))0x00)(); */
 
+/*
 #define GROUP(g)(g>>4)
 #define PIN(p)(p&0x0f)
 #define GROUP_PIN(g,p)( (g<<4) | p)
@@ -57,14 +60,7 @@
 #define P3IE       (*(volatile unsigned char xdata *)0xfe33)
 
 #define P2PU       (*(volatile unsigned char xdata *)0xfe12)
-
-#define nop()    \
-	{            \
-		_nop_(); \
-		_nop_(); \
-		_nop_(); \
-		_nop_(); \
-	}
+*/
 
 /**********************
 *      TYPEDEFS
@@ -90,7 +86,9 @@ typedef uint8_t grp_pin_t;
 /* pin state register list(Px) */
 
 /* Control register_ of STC8G inside IRC clock. */
-sfr IRCBAND  =  0x9d;   /*  */
+
+/*
+sfr IRCBAND  =  0x9d;
 sfr LIRTRIM  =  0x9e;
 sfr IRTRIM   =  0x9f;
 
@@ -105,13 +103,16 @@ sfr P3M0 = 0xb2;
 sfr P4M1 = 0xb3;
 sfr P4M0 = 0xb4;
 sfr P_SW2 = 0xba;
+*/
+
 /*
 * System Reset
 */
 /* Hardware & software reset. */
-sfr WDT_CONTR = 0xc1;   /* Watchdog timer. */
-sfr IAP_CONTR = 0xc7;   /* IAP control register_. */
-sfr RSTCFG    = 0xff;   /* Reset configuration register_.  */
+
+//sfr WDT_CONTR = 0xc1;   /* Watchdog timer. */
+//sfr IAP_CONTR = 0xc7;   /* IAP control register_. */
+//sfr RSTCFG    = 0xff;   /* Reset configuration register_.  */
 
 typedef union {
 	struct {
