@@ -28,8 +28,10 @@
 /*********************
  *      DEFINES
  *********************/
-__sbit        __at   (0xB6) GPIO_I2C_SCL; /* P3^6 */
-__sbit        __at   (0xB7) GPIO_I2C_SDA; /* P3^7 */
+sbit GPIO_I2C_SCL = P3 ^ 6;
+sbit GPIO_I2C_SDA = P3 ^ 7;
+
+
 /**********************
 *      TYPEDEFS
 **********************/

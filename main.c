@@ -18,7 +18,7 @@
  */
 
 #include "stcmcu.h"
-#include "system.h"    /* opreations of system */
+#include "system.h" /* opreations of system */
 #include "oled.h"
 #include "ds1302.h"
 #include "tm1650.h"
@@ -130,7 +130,6 @@ int main(void)
 		my_oled_opr.putascii(16, 30, ':');
 		my_tm1650_opr.show_bit(TM1650_BIT_1, tm1650_segment_value[ten]);
 		my_tm1650_opr.show_bit(TM1650_BIT_2, tm1650_segment_value[biz] | 0x80);
-
 
 		res = my_ds1302_opr.read_register(0x83) & ~(1 << 7);
 		ten = (res & 0xf0) >> 4;

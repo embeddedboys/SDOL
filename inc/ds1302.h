@@ -49,9 +49,10 @@
 /*********************
  *      DEFINES
  *********************/
-__sbit        __at   (0xA0) DS1302_CLK;
-__sbit        __at   (0xA1) DS1302_DAT;
-__sbit        __at   (0xA2) DS1302_RST;
+sbit DS1302_CLK = P2^0;
+sbit DS1302_DAT = P2^1;
+sbit DS1302_RST = P2^2;
+
 
 /**********************
 *      TYPEDEFS
