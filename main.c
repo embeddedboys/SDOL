@@ -23,6 +23,8 @@
 #include "ds1302.h"
 #include "tm1650.h"
 
+static uint8_t nValueTM1650Bit2 = TM1650_SEGMENT_VALUE_5 | 0x80;
+
 static struct system_operations my_sys_opr;
 static struct oled_operations my_oled_opr;
 static struct ds1302_operations my_ds1302_opr;
@@ -39,6 +41,18 @@ const unsigned char tm1650_segment_value[10] = {
 	0x7f, /* `8` */
 	0x6f, /* `9` */
 };
+
+void _timer0_init(void)
+{
+#pragma asm
+	MOV		TMOD,#00H
+	MOV		TL0,#66H
+	MOV		TH0,#0FCH
+	SETB	TR0
+	SETB	ET0
+	SETB	EA
+#pragma endasm
+}
 
 /**
  * @biref all initialization operations for mcu and device.
@@ -59,6 +73,18 @@ void SystemInit()
 
 	register_tm1650_operations(&my_tm1650_opr);
 	my_tm1650_opr.init();
+}
+
+void TM0_Isr() interrupt 1
+{
+	if(nValueTM1650Bit2 & 0x80)
+	{
+		nValueTM1650Bit2 &= ~(1 << 7);
+	}
+	else
+	{
+		nValueTM1650Bit2 |= (1 << 7);
+	}
 }
 
 /**
@@ -102,12 +128,13 @@ int main(void)
 	// my_ds1302_opr.write_register(0x82, 0x36);
 	// my_ds1302_opr.write_register(0x80, 0x0);
 	// my_tm1650_opr.write_register(0x48, 0x11);
-	my_tm1650_opr.set_brightness(TM1650_BRIGHTNESS_LEVEL_8);
+	my_tm1650_opr.set_brightness(TM1650_BRIGHTNESS_LEVEL_1);
 	// my_tm1650_opr.write_register(0x68, tm1650_segment_value[4]);
 	// my_tm1650_opr.write_register(0x6A, tm1650_segment_value[5]);
 	// my_tm1650_opr.write_register(0x6C, tm1650_segment_value[9]);
 	// my_tm1650_opr.write_register(0x6E, tm1650_segment_value[8]);
 
+#if 0
 	my_oled_opr.putascii_string(0, 0, "read from reg do you know ?:");
 	while (1)
 	{
@@ -152,5 +179,23 @@ int main(void)
 		my_oled_opr.flush();
 		// memset(buf, 0x0, 16);
 	}
-	return 0;
+#endif
+	/*
+	TMOD &= 0x00;
+	TL0=0;
+	TH0=0;
+	TR0=1;
+	ET0=1;
+	EA=1;*/
+	_timer0_init();
+
+	while(1){
+		my_tm1650_opr.show_bit(TM1650_BIT_1, TM1650_SEGMENT_VALUE_1);
+		my_tm1650_opr.show_bit(TM1650_BIT_2, nValueTM1650Bit2);
+
+		my_tm1650_opr.show_bit(TM1650_BIT_3, tm1650_segment_value[4]);
+		my_tm1650_opr.show_bit(TM1650_BIT_4, tm1650_segment_value[5]);
+	}
+	
+    return 0;
 }
