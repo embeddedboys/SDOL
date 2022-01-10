@@ -15,7 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with sdol.  If not, see <http://www.gnu.org/licenses/>.
 
-#include <reg51.h>
+#ifndef __STC8_KEIL_H
+#define __STC8_KEIL_H
+
+#include <STC8G.h>
 
 /*********************
  *      DEFINES
@@ -25,6 +28,7 @@
 #define PIN(p)(p&0x0f)
 #define GROUP_PIN(g,p)( (g<<4) | p)
 
+#if 0
 #define CKSEL      (*(volatile unsigned char xdata *)0xfe00)
 #define CLKDIV     (*(volatile unsigned char xdata *)0xfe01)
 #define HIRCCR     (*(volatile unsigned char xdata *)0xfe02)
@@ -71,3 +75,6 @@ sfr P_SW2 = 0xba;
 sfr WDT_CONTR = 0xc1;   /* Watchdog timer. */
 sfr IAP_CONTR = 0xc7;   /* IAP control register_. */
 sfr RSTCFG    = 0xff;   /* Reset configuration register_.  */
+#endif
+
+#endif
