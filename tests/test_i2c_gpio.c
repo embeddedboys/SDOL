@@ -1,5 +1,5 @@
 /**
- * @file spi.c
+ * @file test_i2c_gpio.c
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
  * @version 0.1
@@ -28,3 +28,71 @@
  * SOFTWARE.
  * 
  */
+
+#include "gpio_i2c.h"
+
+#define delay() do { \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+    _nop_();         \
+}while(0);
+
+void SystemInit()
+{
+    P0M0 = 0x00;
+    P0M1 = 0x00;
+    P1M0 = 0x00;
+    P1M1 = 0x00;
+    P2M0 = 0x00;
+    P2M1 = 0x00;
+    P3M0 = 0x00;
+    P3M1 = 0x00;
+    P4M0 = 0x00;
+    P4M1 = 0x00;
+    P5M0 = 0x00;
+    P5M1 = 0x00;
+
+    gpio_i2c_init();
+}
+
+void Delay1000ms()		//@24.000MHz
+{
+	unsigned char i, j, k;
+
+	_nop_();
+	_nop_();
+	i = 122;
+	j = 193;
+	k = 128;
+	do
+	{
+		do
+		{
+			while (--k);
+		} while (--j);
+	} while (--i);
+}
+
+void main( void )
+{
+    SystemInit();
+
+    while( 1 ) {
+        
+        gpio_i2c_start();
+        gpio_i2c_sendbyte( 0x48 ); 
+        gpio_i2c_revack();
+        gpio_i2c_sendbyte( 0x71 ); 
+        gpio_i2c_revack();
+        gpio_i2c_stop();
+
+        Delay1000ms();
+    }
+}

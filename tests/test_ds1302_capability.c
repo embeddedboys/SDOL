@@ -1,5 +1,5 @@
 /**
- * @file spi.c
+ * @file test_ds1302_capability.c
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
  * @version 0.1
@@ -28,3 +28,59 @@
  * SOFTWARE.
  * 
  */
+
+#include "ds1302.h"
+#include "tm1650.h"
+
+static struct ds1302_operations nMyDs1302Opr;
+static struct tm1650_operations nMyTm1650Opr;
+static uint16_t nCount = 0;
+static uint16_t nInterruptCount = 0;
+
+void Timer2Init( void )     //10毫秒@23.894MMHz
+{
+    AUXR &= 0xFB;       //定时器时钟12T模式
+    T2L = 0x38;     //设置定时初始值
+    T2H = 0xB2;     //设置定时初始值
+    AUXR |= 0x10;       //定时器2开始计时
+    IE2 = 0x04;
+    EA = 1;
+}
+
+void SystemInit()
+{
+    P0M0 = 0x00;
+    P0M1 = 0x00;
+    P1M0 = 0x00;
+    P1M1 = 0x00;
+    P2M0 = 0x00;
+    P2M1 = 0x00;
+    P3M0 = 0x00;
+    P3M1 = 0x00;
+    P4M0 = 0x00;
+    P4M1 = 0x00;
+    P5M0 = 0x00;
+    P5M1 = 0x00;
+    
+    register_ds1302_operations( &nMyDs1302Opr );
+    nMyDs1302Opr.init();
+    
+    register_tm1650_operations( &nMyTm1650Opr );
+    nMyTm1650Opr.init();
+}
+
+void Timer2_Isr() interrupt 12
+{
+    if( nInterruptCount++ == 100 ) {
+        nCount++;
+        nInterruptCount = 0;
+    }
+}
+
+void main( void )
+{
+    uint8_t loop = 1;
+
+    SystemInit();
+    
+}

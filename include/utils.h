@@ -1,5 +1,5 @@
 /**
- * @file spi.c
+ * @file utils.h
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
  * @version 0.1
@@ -28,3 +28,35 @@
  * SOFTWARE.
  * 
  */
+
+#ifndef __UTILS_H
+#define __UTILS_H
+
+/*********************
+*      INCLUDES
+*********************/
+#ifndef STCMCU_H
+    #include "stcmcu.h"
+#endif
+
+/*********************
+ *      DEFINES
+ *********************/
+
+/**********************
+*      TYPEDEFS
+**********************/
+
+/**********************
+*      ENUMS
+**********************/
+
+/**********************
+* GLOBAL PROTOTYPES
+**********************/
+int32_t simple_atoi( char s[] );
+
+uint8_t simple_lower( uint8_t c );
+uint8_t simple_isdigit( uint8_t c );
+
+#endif

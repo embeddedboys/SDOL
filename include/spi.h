@@ -1,5 +1,5 @@
 /**
- * @file spi.c
+ * @file spi.h
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
  * @version 0.1

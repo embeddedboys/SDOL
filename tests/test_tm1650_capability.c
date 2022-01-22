@@ -1,5 +1,5 @@
 /**
- * @file spi.c
+ * @file test_tm1650_capability.c
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
  * @version 0.1

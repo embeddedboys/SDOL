@@ -308,13 +308,13 @@ void oled_put_ascii(oled_coord_t x, oled_coord_t y, uint32_t c)
 	const uint8_t *dots = (uint8_t *)&fontdata_8x16[c * 16];
 	uint8_t *pen = oled_buffer;
 
-	oled_area_t clear_area;
-	clear_area.x1 = x;
-	clear_area.y1 = y;
-	clear_area.x2 = x + 8;
-	clear_area.y2 = y + 16;
+	// oled_area_t clear_area;
+	// clear_area.x1 = x;
+	// clear_area.y1 = y;
+	// clear_area.x2 = x + 8;
+	// clear_area.y2 = y + 16;
 
-	oled_clear_area(&clear_area, 0);
+	// oled_clear_area(&clear_area, 0);
 
 	for (row = 0; row < 16; row++)
 	{
@@ -340,7 +340,7 @@ void oled_put_ascii(oled_coord_t x, oled_coord_t y, uint32_t c)
  * @param y 
  * @param str 
  */
-void oled_putascii_string(oled_coord_t x, oled_coord_t y, uint8_t *str) reentrant
+void oled_putascii_string(oled_coord_t x, oled_coord_t y, uint8_t *str)
 {
 	while (*str != '\0')
 	{

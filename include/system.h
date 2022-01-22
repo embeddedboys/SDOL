@@ -1,5 +1,5 @@
 /**
- * @file spi.c
+ * @file system.h
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
  * @version 0.1
@@ -28,3 +28,72 @@
  * SOFTWARE.
  * 
  */
+
+#ifndef __SYSTEM_H
+#define __SYSTEM_H
+
+/*********************
+*      INCLUDES
+*********************/
+#ifndef STCMCU_H
+    #include "stcmcu.h"
+#endif
+
+/*********************
+ *      DEFINES
+ *********************/
+
+/**********************
+*      TYPEDEFS
+**********************/
+
+/**
+ * @brief here redfine because 0x01 and 0x02 
+ *        all present use external clock input
+ */
+typedef enum {
+
+    INTERNAL_HIGH_PRECISION_IRC      = 0x00,
+    EXTERNAL_CRYSTAL_OR_CLOCK        = 0x01,
+    EXTERNAL_CRYSTAL_OR_CLOCK_TOO    = 0x02,    
+    INTERNAL_32KHz_LOW_SPEED_IRC     = 0x03,
+
+} system_clock_t;
+typedef enum {
+
+    SYSTEM_ISP_AREA = 0,
+    USER_PROGRAM_AREA,
+
+} software_reset_type;
+
+typedef enum {
+
+    ALL_AS_GPIO = 0,
+    P32P33_I2C,
+
+} iomux_config;
+typedef struct {
+
+    system_clock_t clock_use;
+
+} system_config_t;
+
+struct system_operations {
+
+    void ( *init )();
+    void ( *reset )( uint8_t reset_type );
+    void ( *wdt_init )();
+    void ( *iomux )( uint8_t iomux_type );
+
+};
+
+/**********************
+*      ENUMS
+**********************/
+
+
+/**********************
+* GLOBAL PROTOTYPES
+**********************/
+void register_system_operations( struct system_operations *opr );
+#endif
