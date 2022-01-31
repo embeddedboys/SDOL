@@ -77,16 +77,16 @@ void system_reset( uint8_t reset_type )
  */
 void system_wdt_init()
 {
-    wdt_contr *con;
+    stcmcu_register_WDT_CONTR_t *con;
     con = 0xc1;
-    con->ch.en_wdt = 1;     /* enable watchdog timer */
+    con->reg.en_wdt = 1;     /* enable watchdog timer */
     /* clear the watchdog timer, hardware will do this automatically */
-    con->ch.clr_wdt = 1;
+    con->reg.clr_wdt = 1;
     /*
     * watchdog timer clock frequency dividing
     * overflow time = 12*32768*2^(wdt_ps+1)/sysclk
     */
-    con->ch.wdt_ps = ( 3 << 1 ); /* div:128;overflow time:1.44s when sysclk=35MHz */
+    con->reg.WDT_PS = ( 3 << 1 ); /* div:128;overflow time:1.44s when sysclk=35MHz */
 }
 
 /**
