@@ -1,4 +1,11 @@
 /**
+ * Copyright (c) 2022 Zheng Hua(writeforever@foxmail.com)
+ * 
+ * This software is released under the MIT License.
+ * https://opensource.org/licenses/MIT
+ */
+
+/**
  * @file gpio_i2c.c
  * @author Zheng Hua (writeforever@foxmail.com)
  * @brief 
@@ -109,11 +116,13 @@ void gpio_i2c_sndnack()
 uint8_t gpio_i2c_readbyte()
 {
     int i;
-    uint8_t byte_read = 0;
+    uint8_t byte_read = 0x00;
 
     for( i = 0; i < 8; i++ ) {
-        byte_read |= __gpio_i2c_get_sda();
+        byte_read |= __gpio_i2c_get_sda() ? 1:0;
+        delay();
         __gpio_i2c_set_scl( 1 );
+        delay();
         __gpio_i2c_set_scl( 0 );
         byte_read <<= 1;
     }

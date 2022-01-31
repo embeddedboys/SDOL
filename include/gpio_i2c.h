@@ -45,19 +45,7 @@
 sbit GPIO_I2C_SCL = P3 ^ 2;
 sbit GPIO_I2C_SDA = P3 ^ 3;
 
-/* cost 416ns in STC8G 24MHz IRC */
-#define delay() do { \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-    _nop_();         \
-}while(0);
+
 /**********************
 *      TYPEDEFS
 **********************/
