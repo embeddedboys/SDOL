@@ -54,7 +54,8 @@
 /**********************
 * GLOBAL PROTOTYPES
 **********************/
-int32_t simple_atoi( char s[] );
+int32_t simple_atoi( const char s[] );
+char *simple_itoa(uint32_t n);
 
 uint8_t simple_lower( uint8_t c );
 uint8_t simple_isdigit( uint8_t c );
