@@ -33,23 +33,14 @@
 #include "tm1650.h"
 #include "uart.h"
 
-static struct ds1302_operations nMyDs1302Opr;
-static struct tm1650_operations nMyTm1650Opr;
 static struct uart_operations nMyUartOpr;
 static uint16_t nCount = 0;
 static uint16_t nInterruptCount = 0;
-const unsigned char tm1650_segment_value[10] = {
-    0x3f, /* `0` */
-    0x06, /* `1` */
-    0x5b, /* `2` */
-    0x4f, /* `3` */
-    0x66, /* `4` */
-    0x6d, /* `5` */
-    0x7d, /* `6` */
-    0x07, /* `7` */
-    0x7f, /* `8` */
-    0x6f, /* `9` */
-};
+
+char wptr = 0;
+char rptr = 0;
+bit busy = 0;
+char recv_buf[16];
 
 void Timer2Init( void )     //10毫秒@23.894MMHz
 {
@@ -76,14 +67,12 @@ void SystemInit()
     P5M0 = 0x00;
     P5M1 = 0x00;
     
-    register_ds1302_operations( &nMyDs1302Opr );
-    nMyDs1302Opr.init();
-    
-    register_tm1650_operations( &nMyTm1650Opr );
-    nMyTm1650Opr.init();
+    register_uart_operations( &nMyUartOpr );
+    // nMyUartOpr.fast_init();
+    nMyUartOpr.init(UART_1);
 
-    register_uart_operations(&nMyUartOpr);
-    nMyUartOpr.fast_init();
+    ES=1;
+    EA=1;
 }
 
 void Timer2_Isr() interrupt 12
@@ -115,31 +104,48 @@ void Delay1000ms()      //@24.000MHz
     while( --i );
 }
 
+void Uart1_Isr() interrupt 4
+{
+    if( TI ) {
+        TI = 0;
+        busy = 0;
+    }
+    
+    if( RI ) {
+        RI = 0;
+        recv_buf[wptr++] = SBUF;
+        wptr &= 0x0f;
+    }
+}
+
+void UartSend( char dat )
+{
+    while( busy );
+    
+    busy = 1;
+    SBUF = dat;
+}
+
+void UartSendStr( char *str )
+{
+    while( *str ) {
+        UartSend(*str++);
+    }
+}
+
 void main( void )
 {
     uint8_t loop = 1;
-    uint8_t disp = 1;
-    uint8_t byte_read = 0x00;
     
     SystemInit();
-    
-    nMyDs1302Opr.write_register( 0x80, 0x05 );
+    UartSendStr("Uart Test!\r\n");
+    UartSendStr("Starting...!\r\n");
 
     while( loop ) {
-        // __ds1302_set_rst(1);
-        // __ds1302_writebyte(0x82);
-        // __ds1302_writebyte(0x11);
-        // __ds1302_set_rst(0);
-        byte_read = nMyDs1302Opr.read_register( 0x81 );
-
-        nMyTm1650Opr.show_bit( TM1650_BIT_4,
-                               tm1650_segment_value[( byte_read & 0x0f )] );
-        nMyTm1650Opr.show_bit( TM1650_BIT_3,
-                               tm1650_segment_value[( byte_read & 0x70 ) >> 4] );
-        SBUF = 'A';            
-        // disp = !disp;
-        // nMyTm1650Opr.show_bit( TM1650_BIT_1,
-        //                        tm1650_segment_value[( disp ) ? 1 : 0] );
-        Delay1000ms();
+        if(rptr != wptr)
+        {
+            UartSend(recv_buf[rptr++]);
+            rptr &= 0x0f;
+        }
     }
 }
