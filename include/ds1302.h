@@ -133,4 +133,6 @@ typedef enum {
 * GLOBAL PROTOTYPES
 **********************/
 void register_ds1302_operations( struct ds1302_operations *opr );
+void __ds1302_set_rst( uint8_t val );
+void __ds1302_writebyte( uint8_t byte_in );
 #endif
