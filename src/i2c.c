@@ -55,7 +55,7 @@ void i2c_init()
  * 硬件自动将I2CMSST的MSIF位置1，向CPU发送中断请求，响应中断后MSIF必须用软件清零。
  * 
  */
-void __i2c_wait()
+static void __i2c_wait()
 {
     while( !( I2CMSST & 0x40 ) );
 
