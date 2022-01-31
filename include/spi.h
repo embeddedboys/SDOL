@@ -28,3 +28,49 @@
  * SOFTWARE.
  * 
  */
+
+#ifndef __SPI_H
+#define __SPI_H
+
+/*********************
+*      INCLUDES
+*********************/
+#ifndef STCMCU_H
+    #include "stcmcu.h"
+#endif
+
+/*********************
+ *      DEFINES
+ *********************/
+
+/**********************
+*      TYPEDEFS
+**********************/
+typedef union SPCTL
+{
+    struct {
+        uint8_t SPR : 2;
+        uint8_t CPHA : 1;
+        uint8_t CPOL : 1;
+        uint8_t MSTR : 1;
+        uint8_t DORD : 1;
+        uint8_t SPEN : 1;
+        uint8_t SSIG : 1;
+    }reg;
+
+    uint8_t full;
+}stcmcu_register_SPCTL_t;
+
+
+/**********************
+*      STRUCT
+**********************/
+
+/**********************
+* GLOBAL PROTOTYPES
+**********************/
+void spi_init();
+void spi_sendbyte(uint8_t dat);
+uint8_t spi_readbyte();
+
+#endif /* __SPI_H */
