@@ -22,7 +22,7 @@
 #include "i2c.h"
 #include "system.h"
 
-static uint8_t oled_buffer[1024]; /* oled display buffer */
+static uint8_t oled_buffer[OLED_BUFFER_SIZE]; /* oled display buffer 128x64 */
 
 /**
 *@description
@@ -32,9 +32,9 @@ static uint8_t oled_buffer[1024]; /* oled display buffer */
 void oled_write_cmd( oled_dc_t val )
 {
     i2c_start();
-    i2c_sendbyte( 0x3C ); //slave address
+    i2c_sendbyte( SSD1306_I2C_ADDR ); //slave address
     i2c_sndack();
-    i2c_sendbyte( COMMAND );
+    i2c_sendbyte( SSD1306_I2C_COMMAND );
     i2c_sndack();
     i2c_sendbyte( val );
     i2c_sndack();
@@ -49,9 +49,9 @@ void oled_write_cmd( oled_dc_t val )
 void oled_write_dat( oled_dc_t val )
 {
     i2c_start();
-    i2c_sendbyte( 0x3C );
+    i2c_sendbyte( SSD1306_I2C_ADDR );
     i2c_sndack();
-    i2c_sendbyte( DATA );
+    i2c_sendbyte( SSD1306_I2C_DATA );
     i2c_sndack();
     i2c_sendbyte( val );
     i2c_sndack();
@@ -113,8 +113,8 @@ void oled_flush()
 {
     uint8_t page, col;
     
-    for( page = 0; page < 8; page++ )
-        for( col = 0; col < 128; col++ )
+    for( page = 0; page < (OLED_VER_RES_MAX / 8); page++ )
+        for( col = 0; col < OLED_HOR_RES_MAX; col++ )
             // if (oled_buffer[OFFSET(page, col)] != 0x00)
         {
             oled_set_pos( page, col );
@@ -131,8 +131,8 @@ void oled_clear()
 {
     uint8_t page, col;
     
-    for( page = 0; page < 8; page++ )
-        for( col = 0; col < 128; col++ )
+    for( page = 0; page < (OLED_VER_RES_MAX / 8); page++ )
+        for( col = 0; col < OLED_HOR_RES_MAX; col++ )
             if( oled_buffer[OFFSET( page, col )] > 0x00 )
             {
                 oled_set_pos( page, col );
@@ -150,20 +150,30 @@ void oled_clear()
 */
 void oled_init( void )
 {
+#if 0
     oled_write_cmd( 0xAE ); /*display off*/
+	
     oled_write_cmd( 0x00 ); /*set lower column address*/
     oled_write_cmd( 0x10 ); /*set higher column address*/
+	
     oled_write_cmd( 0x40 ); /*set display start line*/
     oled_write_cmd( 0xB0 ); /*set page address*/
+	
     oled_write_cmd( 0x81 ); /*contract control*/
     oled_write_cmd( 0x66 ); /*128*/
+	
     oled_write_cmd( 0xA1 ); /*set segment remap*/
+	
     oled_write_cmd( 0xA6 ); /*normal / reverse*/
+	
     oled_write_cmd( 0xA8 ); /*multiplex ratio*/
     oled_write_cmd( 0x3F ); /*duty = 1/64*/
+	
     oled_write_cmd( 0xC8 ); /*Com scan direction*/
+	
     oled_write_cmd( 0xD3 ); /*set display offset*/
     oled_write_cmd( 0x00 );
+	
     oled_write_cmd( 0xD5 ); /*set osc division*/
     oled_write_cmd( 0x80 );
     oled_write_cmd( 0xD9 ); /*set pre-charge period*/
@@ -174,8 +184,42 @@ void oled_init( void )
     oled_write_cmd( 0x30 );
     oled_write_cmd( 0x8d ); /*set charge pump enable*/
     oled_write_cmd( 0x14 );
+	
     oled_write_cmd( 0xAF ); /*display ON*/
-    
+#endif
+
+#if 1
+	oled_write_cmd(0xAE); /*display off*/
+	oled_write_cmd(0xD5); /*set osc division*/
+	oled_write_cmd(0xF0);
+	oled_write_cmd(0xA8); /*multiplex ratio*/
+	oled_write_cmd(0x27); /*duty = 1/40*/
+	oled_write_cmd(0xD3); /*set display offset*/
+	oled_write_cmd(0x00);
+	oled_write_cmd(0x40); /*Set Display Start Line */
+	oled_write_cmd(0x8d); /*set charge pump enable*/
+	oled_write_cmd(0x14);
+	oled_write_cmd(0x20); /*Set page address mode*/
+	oled_write_cmd(0x02);
+	oled_write_cmd(0xA1); /*set segment remap*/
+	oled_write_cmd(0xC8); /*Com scan direction*/
+	oled_write_cmd(0xDA); /*set COM pins*/
+	oled_write_cmd(0x12);
+	oled_write_cmd(0xAD); /*Internal IREF Setting*/
+	oled_write_cmd(0x30);
+	oled_write_cmd(0x81); /*contract control*/
+	oled_write_cmd(0xfF); /*128*/
+	oled_write_cmd(0xD9); /*set pre-charge period*/
+	oled_write_cmd(0x22);
+	oled_write_cmd(0xdb); /*set vcomh*/
+	oled_write_cmd(0x20);
+	oled_write_cmd(0xA4); /*Set Entire Display On/Off*/
+	oled_write_cmd(0xA6); /*normal / reverse*/
+	oled_write_cmd(0x0C); /*set lower column address*/
+	oled_write_cmd(0x11); /*set higher column address*/ 
+	oled_write_cmd(0xAF); /*display ON*/ 
+
+#endif
     oled_set_addr_mode( 2 );
     oled_clear();
 }
@@ -240,11 +284,11 @@ void oled_set_normal_inverse_display(ssd1306_display_mode_t mode)
  * 写 0xAE 关显示（睡眠模式）复位后状态
  * 写 0xAF 开显示
  *
- * @param switch 显示开关
+ * @param sw 显示开关
  */
-void oled_set_display_on_off(ssd1306_display_on_off_t switch)
+void oled_set_display_on_off(ssd1306_display_on_off_t sw)
 {
-	if(switch == SSD1306_DISPLAY_ON){
+	if(sw == SSD1306_DISPLAY_ON){
 		oled_write_cmd(0xAF);
 	}
 	else{
@@ -259,10 +303,45 @@ void oled_set_display_on_off(ssd1306_display_on_off_t switch)
 
 /* ------------ Hardware Configuration(Panel resolution & layout related) Command Table ------------ */
 
+
+/**
+ * @brief SSD1306设置显示起始行
+ * 
+ * 范围0 ~ 63，以基数0x40加和，写命令
+ *
+ * @param start 起始行
+ */
 void oled_set_display_start_line(uint8_t start)
 {
 	if(!(start < 0 && start > 63)){
-		
+		oled_write_cmd(0x40 + start);
+	}
+	else{
+
+	}
+}
+
+
+/**
+ * @brief SSD1306设置显示列模式
+ * 
+ * 写 0xA0 正常显示 0~127 复位后状态
+ * 写 0xAF 反转列   127~0
+ *
+ * @param mode 列显示模式
+ */
+void oled_set_segment_remap(ssd1306_segment_remap_t mode)
+{
+	if(mode == SSD1306_SEGMENT_REMAP_NORNAL){
+		oled_write_cmd(0xA0);	
+	}
+	else if(mode == SSD1306_SEGMENT_REMAP_INVERSE){
+		oled_write_cmd(0xA1);
+	}
+	else{
+
+	}
+}
 
 void oled_new_init( void )
 {

@@ -67,7 +67,14 @@ typedef struct{
 /**********************
 *      STRUCT
 **********************/
-
+typedef struct
+{
+	
+	uint8_t addr;
+	uint8_t *msg_buf;
+	uint16_t len;
+	
+}i2c_msg_t;
 
 /**********************
 * GLOBAL PROTOTYPES

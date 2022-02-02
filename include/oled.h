@@ -35,23 +35,30 @@
 /*********************
  *      DEFINES
  *********************/
+#ifndef SSD1306_128_64
+	#define SSD1306_128_64 0
+#endif
+ 
+#define SSD1306_70_40 1
+
+#define SSD1306_I2C_ADDR    0x78
+#define SSD1306_I2C_COMMAND 0x00
+#define SSD1306_I2C_DATA    0x40
 
 #define OLED_HOR_RES_MAX 128
 #define OLED_VER_RES_MAX 64
 #define OLED_COLOR_DEPTH 1
+#define OLED_BUFFER_SIZE (OLED_HOR_RES_MAX * OLED_VER_RES_MAX / 8)
 
-#define OFFSET(p, c) ((p)*128 + (c)-1)
-#define GET_PAGE_FROM_BUFFER(i) (i / 128)
-#define GET_COL_FROM_BUFFER(i) (i % 128)
+#define OFFSET(p, c) ((p)*OLED_HOR_RES_MAX + (c)-1)
+#define GET_PAGE_FROM_BUFFER(i) (i / OLED_HOR_RES_MAX)
+#define GET_COL_FROM_BUFFER(i) (i % OLED_HOR_RES_MAX)
 
 #define GET_PAGE(pc) (pc >> 16)
 #define GET_COL(pc) (pc & 0xFFFF)
 #define PAGE_COL(page, col) ((page << 16) | col)
 #define PAGE_COL_GET_X(pc) (GET_COL(pc))
 #define PAGE_COL_GET_Y(pc) (GET_PAGE(pc) * 8)
-
-#define COMMAND 0x00
-#define DATA 0x40
 
 /**********************
  *      TYPEDEFS
@@ -68,6 +75,15 @@ typedef enum
 	SSD1306_DISPLAY_ON  = 0x00,
 	SSD1306_DISPLAY_OFF = 0x01,
 }ssd1306_display_on_off_t;
+
+typedef enum
+{
+	SSD1306_SEGMENT_REMAP_NORNAL  = 0x00,
+	SSD1306_SEGMENT_REMAP_INVERSE = 0x01,
+}ssd1306_segment_remap_t;
+
+
+
 #if ((OLED_HOR_RES_MAX <= 255) && (OLED_VER_RES_MAX <= 255))
 typedef uint8_t oled_coord_t;
 #else
@@ -134,6 +150,10 @@ struct oled_operations
 	void (*putascii_string)(oled_coord_t x, oled_coord_t y, uint32_t *str);
 	
 };
+
+/* test */
+
+
 void register_oled_operations(struct oled_operations *opr);
 
 void Glib_Line(int x1, int y1, int x2, int y2);
