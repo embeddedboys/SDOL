@@ -1,6 +1,9 @@
 # file of keil
 mdk_project
 
+# source insight project
+si
+
 # others
 .vscode
 
