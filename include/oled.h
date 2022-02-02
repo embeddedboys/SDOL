@@ -56,6 +56,18 @@
 /**********************
  *      TYPEDEFS
  **********************/
+typedef enum
+{
+	SSD1306_NORMAL_DISPLAY_MODE  = 0x00,
+	SSD1306_INVERSE_DISPLAY_MODE = 0x01,
+}ssd1306_display_mode_t;
+
+
+typedef enum
+{
+	SSD1306_DISPLAY_ON  = 0x00,
+	SSD1306_DISPLAY_OFF = 0x01,
+}ssd1306_display_on_off_t;
 #if ((OLED_HOR_RES_MAX <= 255) && (OLED_VER_RES_MAX <= 255))
 typedef uint8_t oled_coord_t;
 #else
